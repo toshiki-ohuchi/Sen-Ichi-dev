@@ -1,0 +1,24 @@
+import { Context, Next } from 'hono'
+import { getCookie } from 'hono/cookie'
+import { db } from '../db'
+import { sessions } from '../db/schema'
+import { eq, gt } from 'drizzle-orm'
+
+export async function authMiddleware(c: Context, next: Next) {
+  const sessionId = getCookie(c, 'session_id')
+  if (!sessionId) return c.json({ error: 'Unauthorized' }, 401)
+
+  const [session] = await db
+    .select()
+    .from(sessions)
+    .where(eq(sessions.id, sessionId))
+    .limit(1)
+
+  if (!session || session.expiresAt < new Date()) {
+    return c.json({ error: 'Session expired' }, 401)
+  }
+
+  c.set('userEmail', session.userEmail)
+  c.set('userName', session.userName)
+  await next()
+}
