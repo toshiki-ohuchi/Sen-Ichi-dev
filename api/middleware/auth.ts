@@ -2,7 +2,7 @@ import { Context, Next } from 'hono'
 import { getCookie } from 'hono/cookie'
 import { db } from '../db'
 import { sessions } from '../db/schema'
-import { eq, gt } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 
 export async function authMiddleware(c: Context, next: Next) {
   const sessionId = getCookie(c, 'session_id')
@@ -20,5 +20,6 @@ export async function authMiddleware(c: Context, next: Next) {
 
   c.set('userEmail', session.userEmail)
   c.set('userName', session.userName)
+  c.set('userRole', session.userRole ?? 'user')
   await next()
 }

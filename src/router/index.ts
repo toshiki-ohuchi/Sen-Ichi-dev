@@ -13,6 +13,11 @@ const router = createRouter({
       path: '/',
       component: () => import('@/views/HomeView.vue'),
     },
+    {
+      path: '/users',
+      component: () => import('@/views/UsersView.vue'),
+      meta: { adminOnly: true },
+    },
   ],
 })
 
@@ -21,6 +26,7 @@ router.beforeEach(async (to) => {
   const auth = useAuthStore()
   if (auth.loading) await auth.fetchMe()
   if (!auth.user) return '/login'
+  if (to.meta.adminOnly && auth.user.role !== 'admin') return '/'
 })
 
 export default router

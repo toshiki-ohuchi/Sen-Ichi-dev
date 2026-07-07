@@ -88,7 +88,20 @@ export interface FilterValues {
 export interface User {
   email: string
   name: string | null
-  picture: string | null
+  role: 'admin' | 'user'
+}
+
+export interface AppUser {
+  id: number
+  email: string
+  name: string
+  role: 'admin' | 'user'
+  isActive: boolean
+  failedLoginCount: number
+  lockedUntil: string | null
+  lastLoginAt: string | null
+  createdAt: string
+  createdBy: string | null
 }
 
 export interface ListResponse {

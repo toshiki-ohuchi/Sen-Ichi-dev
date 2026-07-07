@@ -12,8 +12,8 @@
       </label>
       <button class="btn btn-secondary btn-sm" @click="handleExport">Excelエクスポート</button>
       <div class="user-info" v-if="auth.user">
-        <img v-if="auth.user.picture" :src="auth.user.picture" class="user-avatar" />
         <span class="user-name">{{ auth.user.name }}</span>
+        <RouterLink v-if="auth.isAdmin()" to="/users" class="btn btn-ghost btn-sm">ユーザー管理</RouterLink>
         <button class="btn btn-ghost btn-sm" @click="auth.logout()">ログアウト</button>
       </div>
     </div>

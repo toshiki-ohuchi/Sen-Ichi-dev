@@ -1,4 +1,4 @@
-import { pgTable, serial, integer, varchar, decimal, text, timestamp, date, uniqueIndex } from 'drizzle-orm/pg-core'
+import { pgTable, serial, integer, varchar, decimal, text, timestamp, date, uniqueIndex, boolean } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 
 export const records = pgTable('records', {
@@ -67,11 +67,26 @@ export const monthlySchedules = pgTable('monthly_schedules', {
   uniqueIdx: uniqueIndex('monthly_schedules_unique').on(table.recordId, table.month, table.activityType),
 }))
 
+export const users = pgTable('users', {
+  id: serial('id').primaryKey(),
+  email: varchar('email', { length: 200 }).notNull().unique(),
+  passwordHash: varchar('password_hash', { length: 200 }).notNull(),
+  name: varchar('name', { length: 200 }).notNull(),
+  role: varchar('role', { length: 20 }).notNull().default('user'), // 'admin' | 'user'
+  isActive: boolean('is_active').notNull().default(true),
+  failedLoginCount: integer('failed_login_count').notNull().default(0),
+  lockedUntil: timestamp('locked_until'),
+  lastLoginAt: timestamp('last_login_at'),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+  createdBy: varchar('created_by', { length: 200 }),
+})
+
 export const sessions = pgTable('sessions', {
   id: varchar('id', { length: 100 }).primaryKey(),
   userEmail: varchar('user_email', { length: 200 }).notNull(),
   userName: varchar('user_name', { length: 200 }),
-  userPicture: varchar('user_picture', { length: 500 }),
+  userRole: varchar('user_role', { length: 20 }).default('user'),
   expiresAt: timestamp('expires_at').notNull(),
   createdAt: timestamp('created_at').defaultNow(),
 })

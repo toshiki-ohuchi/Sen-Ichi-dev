@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { SalesRecord, SalesRecordInput, ListResponse, FilterValues, User } from '@/types'
+import type { SalesRecord, SalesRecordInput, ListResponse, FilterValues, User, AppUser } from '@/types'
 
 const api = axios.create({ baseURL: '/api', withCredentials: true })
 
@@ -15,7 +15,22 @@ api.interceptors.response.use(
 
 export const authApi = {
   me: () => api.get<User | null>('/auth/me').then(r => r.data),
+  login: (email: string, password: string) => api.post<User>('/auth/login', { email, password }).then(r => r.data),
   logout: () => api.post('/auth/logout'),
+}
+
+export const usersApi = {
+  list: () => api.get<AppUser[]>('/users').then(r => r.data),
+  create: (data: { email: string; name: string; password: string; role: string }) =>
+    api.post<AppUser>('/users', data).then(r => r.data),
+  update: (id: number, data: { name?: string; role?: string; isActive?: boolean }) =>
+    api.put<AppUser>(`/users/${id}`, data).then(r => r.data),
+  resetPassword: (id: number, password: string) =>
+    api.put(`/users/${id}/password`, { password }).then(r => r.data),
+  unlock: (id: number) =>
+    api.put(`/users/${id}/unlock`).then(r => r.data),
+  delete: (id: number) =>
+    api.delete(`/users/${id}`).then(r => r.data),
 }
 
 export const recordsApi = {

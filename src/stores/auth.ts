@@ -23,5 +23,7 @@ export const useAuthStore = defineStore('auth', () => {
     window.location.href = '/login'
   }
 
-  return { user, loading, fetchMe, logout }
+  const isAdmin = () => user.value?.role === 'admin'
+
+  return { user, loading, fetchMe, logout, isAdmin }
 })

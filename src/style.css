@@ -52,8 +52,32 @@ html, body, #app { height: 100%; font-family: 'Noto Sans JP', 'Segoe UI', sans-s
 .login-year { color: var(--text-muted); font-size: 13px; }
 .btn-google { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; background: #fff; cursor: pointer; font-size: 14px; font-weight: 500; color: #374151; text-decoration: none; transition: background 0.15s, box-shadow 0.15s; margin-bottom: 16px; }
 .btn-google:hover { background: #f9fafb; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.login-form { display: flex; flex-direction: column; gap: 16px; margin-bottom: 16px; }
+.login-form .form-group label { font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+.login-form .form-group input { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; font-family: inherit; outline: none; }
+.login-form .form-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(26,86,219,0.12); }
+.password-input { position: relative; }
+.password-input input { padding-right: 40px; }
+.toggle-pw { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 16px; line-height: 1; }
+.btn-login { width: 100%; justify-content: center; padding: 12px; font-size: 14px; }
 .login-note { font-size: 11px; color: var(--text-muted); }
-.error-box { background: #fef2f2; border: 1px solid #fca5a5; border-radius: 6px; padding: 10px 14px; color: #b91c1c; font-size: 12px; margin-bottom: 20px; }
+.error-box { background: #fef2f2; border: 1px solid #fca5a5; border-radius: 6px; padding: 10px 14px; color: #b91c1c; font-size: 12px; }
+
+/* ===== USERS PAGE ===== */
+.users-page { padding: 20px; }
+.users-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.users-header h2 { font-size: 16px; font-weight: 700; }
+.role-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.role-badge.admin { background: #dbeafe; color: #1d4ed8; }
+.role-badge.user { background: #f3f4f6; color: #374151; }
+.status-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.status-badge.active { background: #dcfce7; color: #166534; }
+.status-badge.inactive { background: #fee2e2; color: #991b1b; }
+.locked-badge { font-size: 11px; margin-left: 6px; color: #d97706; }
+.row-inactive { opacity: 0.6; }
+.action-cell { white-space: nowrap; display: flex; gap: 4px; align-items: center; }
+.field-hint { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+.users-page .data-table { box-shadow: var(--shadow); }
 
 /* ===== FILTER BAR ===== */
 .filter-bar { background: #fff; border-bottom: 1px solid var(--border); padding: 10px 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
