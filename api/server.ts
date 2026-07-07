@@ -6,7 +6,7 @@ import recordsRouter from './routes/records'
 import usersRouter from './routes/users'
 import type { Variables } from './types'
 
-export const config = { runtime: 'nodejs20.x' }
+export const config = { runtime: 'nodejs' }
 
 const app = new Hono<{ Variables: Variables }>().basePath('/api')
 
