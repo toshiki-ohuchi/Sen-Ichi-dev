@@ -4,8 +4,9 @@ import { users } from '../db/schema'
 import { eq, asc } from 'drizzle-orm'
 import { authMiddleware } from '../middleware/auth'
 import bcrypt from 'bcryptjs'
+import type { Variables } from '../types'
 
-const usersRouter = new Hono()
+const usersRouter = new Hono<{ Variables: Variables }>()
 usersRouter.use('*', authMiddleware)
 
 // 管理者のみ許可するミドルウェア

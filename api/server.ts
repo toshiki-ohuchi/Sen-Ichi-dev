@@ -4,10 +4,11 @@ import { handle } from 'hono/vercel'
 import auth from './routes/auth'
 import recordsRouter from './routes/records'
 import usersRouter from './routes/users'
+import type { Variables } from './types'
 
 export const config = { runtime: 'nodejs20.x' }
 
-const app = new Hono().basePath('/api')
+const app = new Hono<{ Variables: Variables }>().basePath('/api')
 
 app.use('*', cors({
   origin: process.env.BASE_URL || 'http://localhost:5173',

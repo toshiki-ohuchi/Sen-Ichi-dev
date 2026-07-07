@@ -3,9 +3,10 @@ import { db } from '../db'
 import { records, todos, monthlySchedules } from '../db/schema'
 import { eq, ilike, and, or, desc, asc, sql } from 'drizzle-orm'
 import { authMiddleware } from '../middleware/auth'
-import * as XLSX from 'xlsx'
+import type { Variables } from '../types'
+// xlsx はフロントエンド側でのみ使用
 
-const recordsRouter = new Hono()
+const recordsRouter = new Hono<{ Variables: Variables }>()
 recordsRouter.use('*', authMiddleware)
 
 // GET /api/records - list with search/filter
