@@ -21,7 +21,13 @@
         </div>
         <div class="form-group">
           <label>契約形態</label>
-          <input v-model="form.contractType" type="text" placeholder="例：準委任" :disabled="viewOnly" />
+          <div class="checkbox-group">
+            <label v-for="ct in CONTRACT_TYPES" :key="ct" class="checkbox-label">
+              <input type="checkbox" :value="ct" :checked="selectedContractTypes.includes(ct)"
+                :disabled="viewOnly" @change="toggleContractType(ct)" />
+              {{ ct }}
+            </label>
+          </div>
         </div>
         <div class="form-group span-2">
           <label>参画メンバー</label>
@@ -37,7 +43,10 @@
         </div>
         <div class="form-group">
           <label>担当部署</label>
-          <input v-model="form.assignedDept" type="text" placeholder="例：DX" :disabled="viewOnly" />
+          <select v-model="form.assignedDept" :disabled="viewOnly">
+            <option value="">選択してください</option>
+            <option v-for="dept in ASSIGNED_DEPTS" :key="dept" :value="dept">{{ dept }}</option>
+          </select>
         </div>
       </div>
     </div>
@@ -89,7 +98,35 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { SalesRecord, SalesRecordInput } from '@/types'
+
 const form = defineModel<SalesRecord | SalesRecordInput>({ required: true })
 defineProps<{ viewOnly?: boolean }>()
+
+const ASSIGNED_DEPTS = [
+  'サービス営業部',
+  'ITコンサルティング部',
+  '金融サービス部',
+  '流通サービス部',
+  'DXサービス部',
+  'ERPサービス部',
+  'ソリューション開発部',
+]
+
+const CONTRACT_TYPES = ['請負', '派遣', '準委任']
+
+const selectedContractTypes = computed<string[]>(() => {
+  const val = form.value.contractType
+  if (!val) return []
+  return val.split('・').filter(Boolean)
+})
+
+function toggleContractType(ct: string) {
+  const current = selectedContractTypes.value
+  const next = current.includes(ct)
+    ? current.filter(v => v !== ct)
+    : [...current, ct]
+  form.value.contractType = next.join('・')
+}
 </script>
