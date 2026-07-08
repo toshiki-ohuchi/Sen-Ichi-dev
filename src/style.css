@@ -159,6 +159,7 @@ tbody .sticky-col { background: #fff; box-shadow: 2px 0 4px rgba(0,0,0,0.05); }
 .schedule-table td { border: 1px solid var(--border); padding: 2px 4px; vertical-align: top; }
 .schedule-table td.lower-half { background: #f5f3ff; }
 .activity-col { min-width: 140px; background: #f3f4f6 !important; }
+.activity-col-dark { color: #111 !important; }
 .activity-label { font-size: 11px; font-weight: 600; padding: 6px 8px; white-space: nowrap; }
 .schedule-cell { width: 100%; min-width: 90px; border: none; background: transparent; font-size: 11px; resize: none; outline: none; font-family: inherit; }
 

@@ -7,13 +7,16 @@
         <table class="schedule-table">
           <thead>
             <tr>
-              <th class="activity-col">活動種別</th>
-              <th v-for="m in MONTHS" :key="m" :class="{ 'lower-half': HALF_LOWER.includes(m as any) }">{{ m }}</th>
               <th v-if="!viewOnly" class="activity-del-col"></th>
+              <th class="activity-col activity-col-dark">活動種別</th>
+              <th v-for="m in MONTHS" :key="m" :class="{ 'lower-half': HALF_LOWER.includes(m as any) }">{{ m }}</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(act, idx) in activityTypes" :key="idx">
+              <td v-if="!viewOnly">
+                <button class="btn-icon danger" title="この行を削除" @click="removeActivity(idx, act)">✕</button>
+              </td>
               <td class="activity-label">
                 <template v-if="viewOnly">{{ act }}</template>
                 <input v-else :value="act" type="text" class="activity-input"
@@ -23,9 +26,6 @@
                 <textarea :value="getCell(act, m)" rows="3" class="schedule-cell"
                   :disabled="viewOnly"
                   @change="setCell(act, m, ($event.target as HTMLTextAreaElement).value)"></textarea>
-              </td>
-              <td v-if="!viewOnly">
-                <button class="btn-icon danger" title="この行を削除" @click="removeActivity(idx, act)">✕</button>
               </td>
             </tr>
           </tbody>
