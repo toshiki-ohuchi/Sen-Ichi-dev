@@ -152,16 +152,22 @@ tbody .sticky-col { background: #fff; box-shadow: 2px 0 4px rgba(0,0,0,0.05); }
 
 /* ===== SCHEDULE TABLE ===== */
 .schedule-hint { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; }
-.schedule-table-wrapper { overflow-x: auto; }
-.schedule-table { border-collapse: collapse; font-size: 11px; min-width: 1500px; }
-.schedule-table th { background: #2d4a6e; color: #fff; padding: 5px 6px; text-align: center; border: 1px solid #3b5c80; white-space: nowrap; font-weight: 600; }
+.schedule-table-wrapper { overflow: auto; max-height: 70vh; }
+.schedule-table { border-collapse: collapse; font-size: 11px; min-width: 1600px; }
+.schedule-table th { background: #2d4a6e; color: #fff; padding: 5px 6px; text-align: center; border: 1px solid #3b5c80; white-space: nowrap; font-weight: 600; position: sticky; top: 0; z-index: 2; }
 .schedule-table th.lower-half { background: #1e3a5f; }
 .schedule-table td { border: 1px solid var(--border); padding: 2px 4px; vertical-align: top; }
 .schedule-table td.lower-half { background: #f5f3ff; }
-.activity-col { min-width: 140px; background: #f3f4f6 !important; }
+.activity-col { min-width: 150px; background: #2d4a6e !important; position: sticky; left: 0; z-index: 3; }
+/* 編集モード：削除ボタン列がある場合、活動種別列は削除ボタン列幅(36px)分右にずらす */
+.has-del-col .activity-col { left: 36px; }
 .activity-col-dark { color: #111 !important; }
-.activity-label { font-size: 11px; font-weight: 600; padding: 6px 8px; white-space: nowrap; }
-.schedule-cell { width: 100%; min-width: 90px; border: none; background: transparent; font-size: 11px; resize: none; outline: none; font-family: inherit; }
+.activity-label { font-size: 11px; font-weight: 600; padding: 6px 8px; white-space: nowrap; background: #f3f4f6; position: sticky; left: 0; z-index: 1; }
+.has-del-col .activity-label { left: 36px; }
+.activity-del-col { width: 36px; min-width: 36px; position: sticky; left: 0; z-index: 3; background: #2d4a6e !important; }
+.schedule-table td.activity-del-td { width: 36px; min-width: 36px; position: sticky; left: 0; z-index: 1; background: #fff; }
+.schedule-cell { width: 100%; min-width: 130px; border: none; background: transparent; font-size: 11px; resize: none; outline: none; font-family: inherit; }
+.schedule-cell-view { width: 100%; min-width: 130px; font-size: 11px; font-family: inherit; white-space: pre-wrap; word-break: break-word; line-height: 1.5; padding: 2px 0; min-height: 1.5em; }
 
 /* ===== CONFIRM DIALOG ===== */
 .confirm-dialog { background: #fff; border-radius: 8px; padding: 28px; max-width: 400px; width: 100%; box-shadow: 0 4px 24px rgba(0,0,0,0.15); }

@@ -4,7 +4,7 @@
       <h3>月次活動スケジュール（2026年度）</h3>
       <p class="schedule-hint">上期：3月〜9月　下期：10月〜2月</p>
       <div class="schedule-table-wrapper">
-        <table class="schedule-table">
+        <table :class="['schedule-table', { 'has-del-col': !viewOnly }]">
           <thead>
             <tr>
               <th v-if="!viewOnly" class="activity-del-col"></th>
@@ -14,7 +14,7 @@
           </thead>
           <tbody>
             <tr v-for="(act, idx) in activityTypes" :key="idx">
-              <td v-if="!viewOnly">
+              <td v-if="!viewOnly" class="activity-del-td">
                 <button class="btn-icon danger" title="この行を削除" @click="removeActivity(idx, act)">✕</button>
               </td>
               <td class="activity-label">
@@ -23,8 +23,8 @@
                   @blur="renameActivity(idx, act, ($event.target as HTMLInputElement).value)" />
               </td>
               <td v-for="m in MONTHS" :key="m" :class="{ 'lower-half': HALF_LOWER.includes(m as any) }">
-                <textarea :value="getCell(act, m)" rows="3" class="schedule-cell"
-                  :disabled="viewOnly"
+                <div v-if="viewOnly" class="schedule-cell-view">{{ getCell(act, m) }}</div>
+                <textarea v-else :value="getCell(act, m)" rows="3" class="schedule-cell"
                   @change="setCell(act, m, ($event.target as HTMLTextAreaElement).value)"></textarea>
               </td>
             </tr>
