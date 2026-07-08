@@ -5,7 +5,7 @@
       <div class="form-grid">
         <div class="form-group">
           <label>No</label>
-          <input v-model.number="form.no" type="number" :disabled="viewOnly" />
+          <input v-model.number="form.no" type="number" step="1" :disabled="viewOnly" />
         </div>
         <div class="form-group">
           <label>新規ソート</label>
@@ -17,11 +17,11 @@
         </div>
         <div class="form-group">
           <label>売上高（百万円）</label>
-          <input v-model="form.revenue" type="number" step="0.1" :disabled="viewOnly" />
+          <input v-model.number="form.revenue" type="number" step="1" :disabled="viewOnly" />
         </div>
         <div class="form-group">
           <label>IT投資額（百万円）</label>
-          <input v-model="form.itInvestment" type="number" step="0.1" :disabled="viewOnly" />
+          <input v-model.number="form.itInvestment" type="number" step="1" :disabled="viewOnly" />
         </div>
         <div class="form-group">
           <label>ITパートナー比率（%）</label>
@@ -39,13 +39,18 @@
           <label>拠点</label>
           <input v-model="form.location" type="text" :disabled="viewOnly" />
         </div>
-        <div class="form-group span-2">
+        <div class="form-group">
           <label>契約レギュレーション（制約条件）</label>
-          <textarea v-model="form.contractRegulation" rows="3" :disabled="viewOnly"></textarea>
+          <input v-model="form.contractRegulation" type="text" :disabled="viewOnly" />
         </div>
         <div class="form-group">
           <label>客先グレード</label>
-          <input v-model="form.customerGrade" type="text" :disabled="viewOnly" />
+          <select v-model="form.customerGrade" :disabled="viewOnly">
+            <option value="">選択してください</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+          </select>
         </div>
       </div>
     </div>

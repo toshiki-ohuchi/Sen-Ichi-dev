@@ -39,7 +39,7 @@
         </div>
         <div class="form-group">
           <label>平均単価（円）</label>
-          <input v-model="form.avgUnitPrice" type="number" :disabled="viewOnly" />
+          <input v-model.number="form.avgUnitPrice" type="number" step="1" :disabled="viewOnly" />
         </div>
         <div class="form-group">
           <label>担当部署</label>
