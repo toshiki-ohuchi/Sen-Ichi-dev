@@ -7,14 +7,6 @@
     </div>
 
     <div class="filter-selects">
-      <select v-model="store.query.department" @change="onFilter">
-        <option value="">部署名（すべて）</option>
-        <option v-for="v in store.filterValues.department" :key="v" :value="v">{{ v }}</option>
-      </select>
-      <select v-model="store.query.location" @change="onFilter">
-        <option value="">拠点（すべて）</option>
-        <option v-for="v in store.filterValues.location" :key="v" :value="v">{{ v }}</option>
-      </select>
       <select v-model="store.query.assignedDept" @change="onFilter">
         <option value="">担当部署（すべて）</option>
         <option v-for="v in store.filterValues.assignedDept" :key="v" :value="v">{{ v }}</option>

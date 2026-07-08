@@ -81,8 +81,6 @@ export interface SalesRecord {
 export type SalesRecordInput = Omit<SalesRecord, 'id' | 'createdAt' | 'updatedAt' | 'createdBy' | 'updatedBy'>
 
 export interface FilterValues {
-  department: string[]
-  location: string[]
   assignedDept: string[]
   commercialFlow: string[]
   contractType: string[]

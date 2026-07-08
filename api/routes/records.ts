@@ -12,8 +12,6 @@ recordsRouter.use('*', authMiddleware)
 // GET /api/records - list with search/filter
 recordsRouter.get('/', async (c) => {
   const q = c.req.query('q') || ''
-  const department = c.req.query('department') || ''
-  const location = c.req.query('location') || ''
   const assignedDept = c.req.query('assignedDept') || ''
   const commercialFlow = c.req.query('commercialFlow') || ''
   const contractType = c.req.query('contractType') || ''
@@ -25,8 +23,6 @@ recordsRouter.get('/', async (c) => {
 
   const conditions = []
   if (q) conditions.push(or(ilike(records.customerName, `%${q}%`), ilike(records.projectName, `%${q}%`)))
-  if (department) conditions.push(eq(records.department, department))
-  if (location) conditions.push(eq(records.location, location))
   if (assignedDept) conditions.push(eq(records.assignedDept, assignedDept))
   if (commercialFlow) conditions.push(eq(records.commercialFlow, commercialFlow))
   if (contractType) conditions.push(eq(records.contractType, contractType))
@@ -55,7 +51,7 @@ recordsRouter.get('/', async (c) => {
 
 // GET /api/records/filters - get distinct filter values
 recordsRouter.get('/filters', async (c) => {
-  const cols = ['department', 'location', 'assignedDept', 'commercialFlow', 'contractType', 'customerGrade'] as const
+  const cols = ['assignedDept', 'commercialFlow', 'contractType', 'customerGrade'] as const
   const result: Record<string, string[]> = {}
   for (const col of cols) {
     const rows = await db.selectDistinct({ val: records[col] }).from(records).orderBy(asc(records[col]))

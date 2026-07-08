@@ -8,12 +8,11 @@ export const useRecordsStore = defineStore('records', () => {
   const total = ref(0)
   const loading = ref(false)
   const filterValues = ref<FilterValues>({
-    department: [], location: [], assignedDept: [],
-    commercialFlow: [], contractType: [], customerGrade: [],
+    assignedDept: [], commercialFlow: [], contractType: [], customerGrade: [],
   })
 
   const query = reactive({
-    q: '', department: '', location: '', assignedDept: '',
+    q: '', assignedDept: '',
     commercialFlow: '', contractType: '', customerGrade: '',
     sortKey: 'no', sortDir: 'asc', page: 1, pageSize: 20,
   })
@@ -38,8 +37,6 @@ export const useRecordsStore = defineStore('records', () => {
 
   function resetFilters() {
     query.q = ''
-    query.department = ''
-    query.location = ''
     query.assignedDept = ''
     query.commercialFlow = ''
     query.contractType = ''
