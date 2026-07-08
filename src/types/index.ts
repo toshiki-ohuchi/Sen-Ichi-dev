@@ -35,8 +35,8 @@ export interface SalesRecord {
   no: number | null
   newSort: string | null
   customerName: string
-  revenue: string | null
-  itInvestment: string | null
+  revenue: number | null
+  itInvestment: number | null
   itPartnerRatio: string | null
   sasRatio: string | null
   contractRegulation: string | null
@@ -52,7 +52,7 @@ export interface SalesRecord {
   contractType: string | null
   members: string | null
   memberCount: number | null
-  avgUnitPrice: string | null
+  avgUnitPrice: number | null
   assignedDept: string | null
   customerGrade: string | null
   priceTableRequired: string | null

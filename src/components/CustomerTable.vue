@@ -30,10 +30,10 @@
             </td>
             <td v-for="col in COLUMNS" :key="col.key" :title="String(record[col.key as keyof typeof record] ?? '')">
               <template v-if="col.format === 'currency' && record[col.key as keyof typeof record]">
-                ¥{{ Number(record[col.key as keyof typeof record]).toLocaleString() }}
+                ¥{{ Math.round(Number(record[col.key as keyof typeof record])).toLocaleString() }}
               </template>
               <template v-else-if="col.format === 'number' && record[col.key as keyof typeof record]">
-                {{ Number(record[col.key as keyof typeof record]).toLocaleString() }}
+                {{ Math.round(Number(record[col.key as keyof typeof record])).toLocaleString() }}
               </template>
               <template v-else>{{ record[col.key as keyof typeof record] }}</template>
             </td>
