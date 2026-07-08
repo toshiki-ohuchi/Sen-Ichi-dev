@@ -4,7 +4,7 @@
     <div class="users-page">
       <div class="users-header">
         <div class="users-header-left">
-          <RouterLink to="/" class="btn btn-ghost btn-sm back-link">← 一覧に戻る</RouterLink>
+          <RouterLink to="/" class="btn btn-secondary btn-sm back-link">← 一覧に戻る</RouterLink>
           <h2>ユーザー管理</h2>
         </div>
         <button class="btn btn-primary" @click="openCreate">+ ユーザー追加</button>
