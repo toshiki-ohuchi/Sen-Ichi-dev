@@ -175,3 +175,8 @@ tbody .sticky-col { background: #fff; box-shadow: 2px 0 4px rgba(0,0,0,0.05); }
 .checkbox-group { display: flex; gap: 16px; flex-wrap: wrap; padding: 6px 0; }
 .checkbox-label { display: flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer; font-weight: normal; }
 .checkbox-label input[type='checkbox'] { width: 15px; height: 15px; cursor: pointer; }
+
+.activity-input { width: 100%; border: 1px solid #d1d5db; border-radius: 4px; padding: 4px 6px; font-size: 12px; font-family: inherit; background: #fff; }
+.activity-input:focus { outline: none; border-color: var(--primary); }
+.activity-del-col { width: 32px; }
+.add-row-btn { margin-top: 8px; }
