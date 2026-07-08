@@ -103,7 +103,7 @@ recordsRouter.put('/:id', async (c) => {
   const id = parseInt(c.req.param('id'))
   const body = await c.req.json()
   const userEmail = c.get('userEmail')
-  const { todos: todoItems, schedules, version: clientVersion, ...recordData } = body
+  const { todos: todoItems, schedules, version: clientVersion, createdAt, updatedAt, createdBy, updatedBy, ...recordData } = body
 
   const [current] = await db.select({ version: records.version }).from(records).where(eq(records.id, id)).limit(1)
   if (!current) return c.json({ error: 'Not found' }, 404)
