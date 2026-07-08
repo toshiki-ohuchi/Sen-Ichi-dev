@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { db } from '../db/index.js'
 import { records, todos, monthlySchedules } from '../db/schema.js'
-import { eq, ilike, and, or, desc, asc, sql } from 'drizzle-orm'
+import { eq, ilike, and, or, desc, asc, sql, max } from 'drizzle-orm'
 import { authMiddleware } from '../middleware/auth.js'
 import type { Variables } from '../types.js'
 // xlsx はフロントエンド側でのみ使用
@@ -78,8 +78,12 @@ recordsRouter.post('/', async (c) => {
   const userEmail = c.get('userEmail')
   const { todos: todoItems = [], schedules = [], ...recordData } = body
 
+  const [{ maxNo }] = await db.select({ maxNo: max(records.no) }).from(records)
+  const nextNo = (maxNo ?? 0) + 1
+
   const [inserted] = await db.insert(records).values({
     ...recordData,
+    no: nextNo,
     version: 1,
     createdBy: userEmail,
     updatedBy: userEmail,

@@ -3,14 +3,6 @@
     <div class="form-section">
       <h3>顧客情報</h3>
       <div class="form-grid">
-        <div class="form-group">
-          <label>No</label>
-          <input v-model.number="form.no" type="number" step="1" :disabled="viewOnly" />
-        </div>
-        <div class="form-group">
-          <label>新規ソート</label>
-          <input v-model="form.newSort" type="text" :disabled="viewOnly" />
-        </div>
         <div class="form-group span-2">
           <label>顧客名 <span class="required">*</span></label>
           <input v-model="form.customerName" type="text" :disabled="viewOnly" />

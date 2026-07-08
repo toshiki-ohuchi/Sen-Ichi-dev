@@ -17,7 +17,13 @@
         </div>
         <div class="form-group">
           <label>商流</label>
-          <input v-model="form.commercialFlow" type="text" placeholder="例：2次" :disabled="viewOnly" />
+          <select v-model="form.commercialFlow" :disabled="viewOnly">
+            <option value="">選択してください</option>
+            <option value="1次">1次</option>
+            <option value="2次">2次</option>
+            <option value="3次">3次</option>
+            <option value="4次">4次</option>
+          </select>
         </div>
         <div class="form-group">
           <label>契約形態</label>
@@ -57,7 +63,7 @@
         <div class="form-group">
           <label>提示要否</label>
           <select v-model="form.priceTableRequired" :disabled="viewOnly">
-            <option value="">-</option>
+            <option value="">選択してください</option>
             <option value="必要">必要</option>
             <option value="不要">不要</option>
           </select>
@@ -68,7 +74,11 @@
         </div>
         <div class="form-group">
           <label>提示Ver.</label>
-          <input v-model="form.priceTableVer" type="text" placeholder="例：二次" :disabled="viewOnly" />
+          <select v-model="form.priceTableVer" :disabled="viewOnly">
+            <option value="">選択してください</option>
+            <option value="二次">二次</option>
+            <option value="一次">一次</option>
+          </select>
         </div>
       </div>
     </div>
@@ -79,7 +89,7 @@
         <div class="form-group">
           <label>提示要否</label>
           <select v-model="form.overworkRequired" :disabled="viewOnly">
-            <option value="">-</option>
+            <option value="">選択してください</option>
             <option value="必要">必要</option>
             <option value="不要">不要</option>
           </select>
@@ -90,7 +100,11 @@
         </div>
         <div class="form-group">
           <label>提示Ver.</label>
-          <input v-model="form.overworkVer" type="text" placeholder="例：VOL.2" :disabled="viewOnly" />
+          <select v-model="form.overworkVer" :disabled="viewOnly">
+            <option value="">選択してください</option>
+            <option value="VOL.2">VOL.2</option>
+            <option value="VOL.1">VOL.1</option>
+          </select>
         </div>
       </div>
     </div>
