@@ -17,7 +17,8 @@
         </div>
         <div class="form-group">
           <label>商流</label>
-          <select v-model="form.commercialFlow" :disabled="viewOnly">
+          <select :value="form.commercialFlow ?? ''" :disabled="viewOnly"
+            @change="form.commercialFlow = ($event.target as HTMLSelectElement).value || null">
             <option value="">選択してください</option>
             <option value="1次">1次</option>
             <option value="2次">2次</option>
@@ -49,7 +50,8 @@
         </div>
         <div class="form-group">
           <label>担当部署</label>
-          <select v-model="form.assignedDept" :disabled="viewOnly">
+          <select :value="form.assignedDept ?? ''" :disabled="viewOnly"
+            @change="form.assignedDept = ($event.target as HTMLSelectElement).value || null">
             <option value="">選択してください</option>
             <option v-for="dept in ASSIGNED_DEPTS" :key="dept" :value="dept">{{ dept }}</option>
           </select>
@@ -62,7 +64,8 @@
       <div class="form-grid three-col">
         <div class="form-group">
           <label>提示要否</label>
-          <select v-model="form.priceTableRequired" :disabled="viewOnly">
+          <select :value="form.priceTableRequired ?? ''" :disabled="viewOnly"
+            @change="form.priceTableRequired = ($event.target as HTMLSelectElement).value || null">
             <option value="">選択してください</option>
             <option value="必要">必要</option>
             <option value="不要">不要</option>
@@ -74,7 +77,8 @@
         </div>
         <div class="form-group">
           <label>提示Ver.</label>
-          <select v-model="form.priceTableVer" :disabled="viewOnly">
+          <select :value="form.priceTableVer ?? ''" :disabled="viewOnly"
+            @change="form.priceTableVer = ($event.target as HTMLSelectElement).value || null">
             <option value="">選択してください</option>
             <option value="二次">二次</option>
             <option value="一次">一次</option>
@@ -88,7 +92,8 @@
       <div class="form-grid three-col">
         <div class="form-group">
           <label>提示要否</label>
-          <select v-model="form.overworkRequired" :disabled="viewOnly">
+          <select :value="form.overworkRequired ?? ''" :disabled="viewOnly"
+            @change="form.overworkRequired = ($event.target as HTMLSelectElement).value || null">
             <option value="">選択してください</option>
             <option value="必要">必要</option>
             <option value="不要">不要</option>
@@ -100,7 +105,8 @@
         </div>
         <div class="form-group">
           <label>提示Ver.</label>
-          <select v-model="form.overworkVer" :disabled="viewOnly">
+          <select :value="form.overworkVer ?? ''" :disabled="viewOnly"
+            @change="form.overworkVer = ($event.target as HTMLSelectElement).value || null">
             <option value="">選択してください</option>
             <option value="VOL.2">VOL.2</option>
             <option value="VOL.1">VOL.1</option>

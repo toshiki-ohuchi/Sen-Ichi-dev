@@ -37,7 +37,8 @@
         </div>
         <div class="form-group">
           <label>客先グレード</label>
-          <select v-model="form.customerGrade" :disabled="viewOnly">
+          <select :value="form.customerGrade ?? ''" :disabled="viewOnly"
+            @change="form.customerGrade = ($event.target as HTMLSelectElement).value || null">
             <option value="">選択してください</option>
             <option value="A">A</option>
             <option value="B">B</option>
