@@ -6,14 +6,17 @@
       <span class="year-badge">2026年度</span>
     </div>
     <div class="header-right">
-      <label class="btn btn-secondary btn-sm">
-        <input type="file" accept=".xlsx,.xls" style="display:none" @change="handleImport" />
-        Excelインポート
-      </label>
-      <button class="btn btn-secondary btn-sm" @click="handleExport">Excelエクスポート</button>
+      <template v-if="!isUsersPage">
+        <label class="btn btn-secondary btn-sm">
+          <input type="file" accept=".xlsx,.xls" style="display:none" @change="handleImport" />
+          Excelインポート
+        </label>
+        <button class="btn btn-secondary btn-sm" @click="handleExport">Excelエクスポート</button>
+      </template>
       <div class="user-info" v-if="auth.user">
         <span class="user-name">{{ auth.user.name }}</span>
-        <RouterLink v-if="auth.isAdmin()" to="/users" class="btn btn-ghost btn-sm">ユーザー管理</RouterLink>
+        <RouterLink v-if="isUsersPage" to="/" class="btn btn-ghost btn-sm">← 一覧に戻る</RouterLink>
+        <RouterLink v-else-if="auth.isAdmin()" to="/users" class="btn btn-ghost btn-sm">ユーザー管理</RouterLink>
         <button class="btn btn-ghost btn-sm" @click="auth.logout()">ログアウト</button>
       </div>
     </div>
@@ -21,6 +24,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import * as XLSX from 'xlsx'
 import { useAuthStore } from '@/stores/auth'
 import { useRecordsStore } from '@/stores/records'
@@ -29,6 +34,9 @@ import { createEmptyRecord, MONTHS, ACTIVITY_TYPES } from '@/types'
 
 const auth = useAuthStore()
 const store = useRecordsStore()
+const route = useRoute()
+
+const isUsersPage = computed(() => route.path === '/users')
 
 async function handleImport(e: Event) {
   const file = (e.target as HTMLInputElement).files?.[0]
