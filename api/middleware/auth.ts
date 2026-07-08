@@ -1,9 +1,9 @@
 import { Context, Next } from 'hono'
 import { getCookie } from 'hono/cookie'
-import { db } from '../db'
-import { sessions } from '../db/schema'
+import { db } from '../db/index.js'
+import { sessions } from '../db/schema.js'
 import { eq } from 'drizzle-orm'
-import type { Variables } from '../types'
+import type { Variables } from '../types.js'
 
 export async function authMiddleware(c: Context<{ Variables: Variables }>, next: Next) {
   const sessionId = getCookie(c, 'session_id')

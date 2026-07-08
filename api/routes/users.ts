@@ -1,10 +1,10 @@
 import { Hono } from 'hono'
-import { db } from '../db'
-import { users } from '../db/schema'
+import { db } from '../db/index.js'
+import { users } from '../db/schema.js'
 import { eq, asc } from 'drizzle-orm'
-import { authMiddleware } from '../middleware/auth'
+import { authMiddleware } from '../middleware/auth.js'
 import bcrypt from 'bcryptjs'
-import type { Variables } from '../types'
+import type { Variables } from '../types.js'
 
 const usersRouter = new Hono<{ Variables: Variables }>()
 usersRouter.use('*', authMiddleware)

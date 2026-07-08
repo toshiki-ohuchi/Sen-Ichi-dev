@@ -1,9 +1,9 @@
 import { Hono } from 'hono'
-import { db } from '../db'
-import { records, todos, monthlySchedules } from '../db/schema'
+import { db } from '../db/index.js'
+import { records, todos, monthlySchedules } from '../db/schema.js'
 import { eq, ilike, and, or, desc, asc, sql } from 'drizzle-orm'
-import { authMiddleware } from '../middleware/auth'
-import type { Variables } from '../types'
+import { authMiddleware } from '../middleware/auth.js'
+import type { Variables } from '../types.js'
 // xlsx はフロントエンド側でのみ使用
 
 const recordsRouter = new Hono<{ Variables: Variables }>()

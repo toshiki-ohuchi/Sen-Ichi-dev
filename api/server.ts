@@ -1,10 +1,10 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { handle } from 'hono/vercel'
-import auth from './routes/auth'
-import recordsRouter from './routes/records'
-import usersRouter from './routes/users'
-import type { Variables } from './types'
+import auth from './routes/auth.js'
+import recordsRouter from './routes/records.js'
+import usersRouter from './routes/users.js'
+import type { Variables } from './types.js'
 
 export const config = { runtime: 'nodejs' }
 
