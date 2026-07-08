@@ -61,7 +61,11 @@ export interface SalesRecord {
   overworkRequired: string | null
   overworkDate: string | null
   overworkVer: string | null
+  issues: string | null
   salesStatus: string | null
+  longTermTarget: string | null
+  midTermTarget: string | null
+  currentTermTarget: string | null
   planTarget: string | null
   projectConcept: string | null
   fiscalYear: number
@@ -127,7 +131,8 @@ export function createEmptyRecord(): SalesRecordInput {
     avgUnitPrice: null, assignedDept: null, customerGrade: null,
     priceTableRequired: null, priceTableDate: null, priceTableVer: null,
     overworkRequired: null, overworkDate: null, overworkVer: null,
-    salesStatus: null, planTarget: null, projectConcept: null,
+    issues: null, salesStatus: null, longTermTarget: null, midTermTarget: null,
+    currentTermTarget: null, planTarget: null, projectConcept: null,
     fiscalYear: 2026, version: 1, todos: [], schedules,
   }
 }

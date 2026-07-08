@@ -2,12 +2,18 @@
   <div class="home">
     <AppHeader />
     <FilterBar />
-    <CustomerTable @edit="openEdit" @add="openAdd" />
+    <CustomerTable @edit="openEdit" @add="openAdd" @view="openView" />
     <CustomerModal
       v-if="showModal"
       :record="editRecord"
       @close="showModal = false"
       @saved="onSaved"
+    />
+    <CustomerModal
+      v-if="showViewModal"
+      :record="viewRecord"
+      :view-only="true"
+      @close="showViewModal = false"
     />
   </div>
 </template>
@@ -23,7 +29,9 @@ import type { SalesRecord } from '@/types'
 
 const store = useRecordsStore()
 const showModal = ref(false)
+const showViewModal = ref(false)
 const editRecord = ref<SalesRecord | null>(null)
+const viewRecord = ref<SalesRecord | null>(null)
 
 onMounted(async () => {
   await Promise.all([store.fetchList(), store.fetchFilters()])
@@ -37,6 +45,11 @@ function openAdd() {
 function openEdit(record: SalesRecord) {
   editRecord.value = record
   showModal.value = true
+}
+
+function openView(record: SalesRecord) {
+  viewRecord.value = record
+  showViewModal.value = true
 }
 
 async function onSaved() {

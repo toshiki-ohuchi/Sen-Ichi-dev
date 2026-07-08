@@ -24,6 +24,7 @@
           </tr>
           <tr v-for="record in store.records" :key="record.id" class="data-row">
             <td class="col-actions sticky-col">
+              <button class="btn btn-xs btn-secondary" @click="$emit('view', record)">閲覧</button>
               <button class="btn btn-xs btn-primary" @click="$emit('edit', record)">編集</button>
               <button class="btn btn-xs btn-danger" @click="confirmDelete(record)">削除</button>
             </td>
@@ -68,7 +69,7 @@ import { useRecordsStore } from '@/stores/records'
 import { recordsApi } from '@/api/client'
 import type { SalesRecord } from '@/types'
 
-defineEmits<{ edit: [record: SalesRecord]; add: [] }>()
+defineEmits<{ edit: [record: SalesRecord]; add: []; view: [record: SalesRecord] }>()
 
 const store = useRecordsStore()
 const deleteTarget = ref<SalesRecord | null>(null)

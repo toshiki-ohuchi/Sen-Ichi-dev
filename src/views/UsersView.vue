@@ -3,7 +3,10 @@
     <AppHeader />
     <div class="users-page">
       <div class="users-header">
-        <h2>ユーザー管理</h2>
+        <div class="users-header-left">
+          <RouterLink to="/" class="btn btn-ghost btn-sm back-link">← 一覧に戻る</RouterLink>
+          <h2>ユーザー管理</h2>
+        </div>
         <button class="btn btn-primary" @click="openCreate">+ ユーザー追加</button>
       </div>
 
@@ -133,6 +136,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
+import { RouterLink } from 'vue-router'
 import AppHeader from '@/components/AppHeader.vue'
 import { usersApi } from '@/api/client'
 import { useAuthStore } from '@/stores/auth'

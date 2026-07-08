@@ -15,7 +15,8 @@
             <tr v-for="act in ACTIVITY_TYPES" :key="act">
               <td class="activity-label">{{ act }}</td>
               <td v-for="m in MONTHS" :key="m" :class="{ 'lower-half': HALF_LOWER.includes(m as any) }">
-                <textarea v-model="scheduleMap[m][act]" rows="3" class="schedule-cell" @change="syncToForm(m, act)"></textarea>
+                <textarea v-model="scheduleMap[m][act]" rows="3" class="schedule-cell"
+                  :disabled="viewOnly" @change="syncToForm(m, act)"></textarea>
               </td>
             </tr>
           </tbody>
@@ -31,8 +32,8 @@ import { MONTHS, HALF_LOWER, ACTIVITY_TYPES } from '@/types'
 import type { SalesRecord, SalesRecordInput } from '@/types'
 
 const form = defineModel<SalesRecord | SalesRecordInput>({ required: true })
+defineProps<{ viewOnly?: boolean }>()
 
-// schedules配列 → マップに変換（編集しやすいように）
 const scheduleMap = reactive<Record<string, Record<string, string>>>({})
 for (const m of MONTHS) {
   scheduleMap[m] = {}
