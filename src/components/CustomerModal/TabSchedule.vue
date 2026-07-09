@@ -3,33 +3,49 @@
     <div class="form-section">
       <h3>月次活動スケジュール（2026年度）</h3>
       <p class="schedule-hint">上期：3月〜9月　下期：10月〜2月</p>
-      <div class="schedule-table-wrapper">
-        <table :class="['schedule-table', { 'has-del-col': !viewOnly }]">
-          <thead>
-            <tr>
-              <th v-if="!viewOnly" class="activity-del-col"></th>
-              <th class="activity-col activity-col-dark">活動種別</th>
-              <th v-for="m in MONTHS" :key="m" :class="{ 'lower-half': HALF_LOWER.includes(m as any) }">{{ m }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(act, idx) in activityTypes" :key="idx">
-              <td v-if="!viewOnly" class="activity-del-td">
-                <button class="btn-icon danger" title="この行を削除" @click="removeActivity(idx, act)">✕</button>
-              </td>
-              <td class="activity-label">
-                <template v-if="viewOnly">{{ act }}</template>
-                <input v-else :value="act" type="text" class="activity-input"
-                  @blur="renameActivity(idx, act, ($event.target as HTMLInputElement).value)" />
-              </td>
-              <td v-for="m in MONTHS" :key="m" :class="{ 'lower-half': HALF_LOWER.includes(m as any) }">
-                <div v-if="viewOnly" class="schedule-cell-view">{{ getCell(act, m) }}</div>
-                <textarea v-else :value="getCell(act, m)" rows="3" class="schedule-cell"
-                  @change="setCell(act, m, ($event.target as HTMLTextAreaElement).value)"></textarea>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="schedule-outer">
+        <!-- 固定左列：活動種別 -->
+        <div class="schedule-fixed" ref="fixedRef">
+          <table class="schedule-table schedule-table-fixed">
+            <thead>
+              <tr>
+                <th v-if="!viewOnly" class="activity-del-col"></th>
+                <th class="activity-col activity-col-dark">活動種別</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(act, idx) in activityTypes" :key="idx">
+                <td v-if="!viewOnly" class="activity-del-td">
+                  <button class="btn-icon danger" title="この行を削除" @click="removeActivity(idx, act)">✕</button>
+                </td>
+                <td class="activity-label">
+                  <template v-if="viewOnly">{{ act }}</template>
+                  <input v-else :value="act" type="text" class="activity-input"
+                    @blur="renameActivity(idx, act, ($event.target as HTMLInputElement).value)" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- スクロール領域：月別セル -->
+        <div class="schedule-scroll" ref="scrollRef" @scroll="syncScroll">
+          <table class="schedule-table schedule-table-scroll">
+            <thead>
+              <tr>
+                <th v-for="m in MONTHS" :key="m" :class="{ 'lower-half': HALF_LOWER.includes(m as any) }">{{ m }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(act, idx) in activityTypes" :key="idx">
+                <td v-for="m in MONTHS" :key="m" :class="{ 'lower-half': HALF_LOWER.includes(m as any) }">
+                  <div v-if="viewOnly" class="schedule-cell-view">{{ getCell(act, m) }}</div>
+                  <textarea v-else :value="getCell(act, m)" rows="3" class="schedule-cell"
+                    @change="setCell(act, m, ($event.target as HTMLTextAreaElement).value)"></textarea>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
       <button v-if="!viewOnly" class="btn btn-sm btn-secondary add-row-btn" @click="addActivity">
         + 行を追加
@@ -59,21 +75,25 @@ const activityTypes = ref<string[]>([...DEFAULT_ACTIVITY_TYPES])
 const scheduleMap = reactive<Record<string, Record<string, string>>>({})
 let isSyncing = false
 
+const fixedRef = ref<HTMLElement | null>(null)
+const scrollRef = ref<HTMLElement | null>(null)
+
+function syncScroll(e: Event) {
+  const scrollTop = (e.target as HTMLElement).scrollTop
+  if (fixedRef.value) fixedRef.value.scrollTop = scrollTop
+}
+
 function initFromSchedules(schedules: typeof form.value.schedules) {
-  // scheduleMapをリセット
   for (const key of Object.keys(scheduleMap)) delete scheduleMap[key]
 
-  // スケジュールからデータを読み込み
   for (const s of schedules) {
     if (!scheduleMap[s.activityType]) scheduleMap[s.activityType] = {}
     scheduleMap[s.activityType][s.month] = s.content || ''
   }
 
-  // 活動種別一覧を導出（既存データ優先、なければデフォルト）
   const existingTypes = [...new Set(schedules.map(s => s.activityType))]
   activityTypes.value = existingTypes.length > 0 ? existingTypes : [...DEFAULT_ACTIVITY_TYPES]
 
-  // 全種別・全月のセルを初期化（未設定は空文字）
   for (const act of activityTypes.value) {
     if (!scheduleMap[act]) scheduleMap[act] = {}
     for (const m of MONTHS) {
@@ -82,7 +102,6 @@ function initFromSchedules(schedules: typeof form.value.schedules) {
   }
 }
 
-// form.schedulesが更新されたとき（初回・編集データ読込時）に初期化
 watch(() => form.value.schedules, (schedules) => {
   if (isSyncing) return
   initFromSchedules(schedules)
@@ -113,7 +132,6 @@ function syncToForm() {
 function renameActivity(idx: number, oldName: string, newName: string) {
   newName = newName.trim()
   if (!newName || oldName === newName) return
-  // スケジュールデータを新名称に移行
   scheduleMap[newName] = { ...scheduleMap[oldName] }
   delete scheduleMap[oldName]
   activityTypes.value[idx] = newName
