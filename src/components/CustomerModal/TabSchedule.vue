@@ -3,7 +3,7 @@
     <div class="form-section">
       <h3>月次活動スケジュール（2026年度）</h3>
       <p class="schedule-hint">上期：3月〜9月　下期：10月〜2月</p>
-      <div class="schedule-table-wrapper" ref="wrapperRef" @scroll="onScroll">
+      <div class="schedule-table-wrapper">
         <table class="schedule-table">
           <thead>
             <tr>
@@ -59,14 +59,6 @@ const activityTypes = ref<string[]>([...DEFAULT_ACTIVITY_TYPES])
 const scheduleMap = reactive<Record<string, Record<string, string>>>({})
 let isSyncing = false
 
-const wrapperRef = ref<HTMLElement | null>(null)
-
-function onScroll() {
-  if (!wrapperRef.value) return
-  const x = wrapperRef.value.scrollLeft
-  const cells = wrapperRef.value.querySelectorAll<HTMLElement>('.freeze-col')
-  cells.forEach(cell => { cell.style.transform = `translateX(${x}px)` })
-}
 
 function initFromSchedules(schedules: typeof form.value.schedules) {
   for (const key of Object.keys(scheduleMap)) delete scheduleMap[key]
