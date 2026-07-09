@@ -163,7 +163,7 @@ tbody .sticky-col { background: #fff; box-shadow: 2px 0 4px rgba(0,0,0,0.05); }
 .schedule-table thead .freeze-col { position: sticky; left: 0; z-index: 3; }
 .schedule-table tbody .freeze-col { position: sticky; left: 0; z-index: 2; }
 .activity-col { min-width: 150px; background: #2d4a6e !important; }
-.activity-col-dark { color: #111 !important; }
+.activity-col-dark { color: #fff !important; }
 .activity-label { font-size: 11px; font-weight: 600; padding: 6px 8px; white-space: nowrap; background: #f3f4f6; }
 .activity-del-col { width: 36px; min-width: 36px; background: #2d4a6e !important; }
 .schedule-table td.activity-del-td { width: 36px; min-width: 36px; background: #fff; text-align: center; }
