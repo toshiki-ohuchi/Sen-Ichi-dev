@@ -33,7 +33,6 @@ export interface ScheduleEntry {
 export interface SalesRecord {
   id: number
   no: number | null
-  newSort: string | null
   customerName: string
   revenue: number | null
   itInvestment: number | null
@@ -121,7 +120,7 @@ export function createEmptyRecord(): SalesRecordInput {
     }
   }
   return {
-    no: null, newSort: null, customerName: '', revenue: null, itInvestment: null,
+    no: null, customerName: '', revenue: null, itInvestment: null,
     itPartnerRatio: null, sasRatio: null, contractRegulation: null,
     department: null, location: null, businessDirector: null, operationDirector: null,
     siteDirector: null, projectName: null, projectTotal: null, endUserOrgChart: null,

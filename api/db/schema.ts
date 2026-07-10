@@ -4,7 +4,6 @@ import { relations } from 'drizzle-orm'
 export const records = pgTable('records', {
   id: serial('id').primaryKey(),
   no: integer('no'),
-  newSort: varchar('new_sort', { length: 50 }),
   customerName: varchar('customer_name', { length: 200 }).notNull(),
   revenue: integer('revenue'),
   itInvestment: integer('it_investment'),
