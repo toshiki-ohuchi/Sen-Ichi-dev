@@ -5,7 +5,7 @@ import recordsRouter from './routes/records.js'
 import usersRouter from './routes/users.js'
 import type { Variables } from './types.js'
 
-const app = new Hono<{ Variables: Variables }>().basePath('/api')
+export const app = new Hono<{ Variables: Variables }>().basePath('/api')
 
 app.use('*', cors({
   origin: process.env.BASE_URL || 'http://localhost:5173',
