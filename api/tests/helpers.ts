@@ -12,7 +12,7 @@ export async function login(email: string, password: string): Promise<string> {
 }
 
 /** 認証済みリクエストを送る */
-export function authRequest(method: string, path: string, cookie: string, body?: unknown): Promise<Response> {
+export async function authRequest(method: string, path: string, cookie: string, body?: unknown): Promise<Response> {
   return app.request(path, {
     method,
     headers: {
