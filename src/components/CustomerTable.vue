@@ -35,6 +35,9 @@
               <template v-else-if="col.format === 'number' && record[col.key as keyof typeof record]">
                 {{ Math.round(Number(record[col.key as keyof typeof record])).toLocaleString() }}
               </template>
+              <template v-else-if="col.format === 'datetime' && record[col.key as keyof typeof record]">
+                {{ formatJST(String(record[col.key as keyof typeof record])) }}
+              </template>
               <template v-else>{{ record[col.key as keyof typeof record] }}</template>
             </td>
           </tr>
@@ -76,7 +79,6 @@ const deleteTarget = ref<SalesRecord | null>(null)
 
 const COLUMNS = [
   { key: 'no', label: 'No', format: 'number' },
-  { key: 'newSort', label: '新規ソート', format: 'text' },
   { key: 'customerName', label: '顧客名', format: 'text' },
   { key: 'revenue', label: '売上高（百万円）', format: 'number' },
   { key: 'itInvestment', label: 'IT投資額（百万円）', format: 'number' },
@@ -94,10 +96,15 @@ const COLUMNS = [
   { key: 'customerGrade', label: '客先グレード', format: 'text' },
   { key: 'priceTableRequired', label: '単価TB提示', format: 'text' },
   { key: 'overworkRequired', label: '高稼働提示', format: 'text' },
-  { key: 'updatedAt', label: '更新日時', format: 'text' },
+  { key: 'updatedAt', label: '更新日時', format: 'datetime' },
 ] as const
 
 const totalPages = computed(() => Math.max(1, Math.ceil(store.total / store.query.pageSize)))
+
+function formatJST(iso: string): string {
+  if (!iso) return ''
+  return new Date(iso).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
+}
 
 function changePage(delta: number) {
   store.query.page += delta

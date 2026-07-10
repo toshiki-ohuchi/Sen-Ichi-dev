@@ -43,7 +43,6 @@
         </button>
       </form>
 
-      <p class="login-note">※ @sas-com.com のアカウントのみ利用可能です。</p>
     </div>
   </div>
 </template>

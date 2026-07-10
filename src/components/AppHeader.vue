@@ -78,7 +78,7 @@ async function handleImport(e: Event) {
 
 function handleExport() {
   const headers = [
-    'No','新規ソート','顧客名','売上高（百万円）','IT投資額（百万円）',
+    'No','顧客名','売上高（百万円）','IT投資額（百万円）',
     'ITパートナー比率（%）','ITパートナー内SAS比率（%）','契約レギュレーション',
     '部署名','拠点','事業責任者','業務責任者','現場責任者','案件名','案件全体人数',
     'エンドユーザ全体体制図','商流','契約形態','参画メンバー','参画人数','平均単価',
@@ -87,7 +87,7 @@ function handleExport() {
     '営業状況（直近）','計画目標','案件コンセプト',
   ]
   const dataRows = store.records.map(r => [
-    r.no, r.newSort, r.customerName, r.revenue, r.itInvestment,
+    r.no, r.customerName, r.revenue, r.itInvestment,
     r.itPartnerRatio, r.sasRatio, r.contractRegulation,
     r.department, r.location, r.businessDirector, r.operationDirector, r.siteDirector,
     r.projectName, r.projectTotal, r.endUserOrgChart, r.commercialFlow, r.contractType,
