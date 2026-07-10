@@ -44,6 +44,7 @@
       </form>
 
     </div>
+    <p class="login-copyright">Copyright &copy; 2026 software agency system co.,ltd All rights reserved.</p>
   </div>
 </template>
 
