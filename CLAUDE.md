@@ -132,7 +132,9 @@ git push origin main
 
 ```
 docs/
-├── architecture.html        # システム構成図
+├── architecture.html              # システム構成図（旧）
+├── システム構成図/
+│   └── システム構成図.html         # システム構成図（最新・CI/CD含む）
 └── 詳細設計書/
     ├── 1_ドキュメント概要.md
     ├── 2_システム概要.md
@@ -146,6 +148,37 @@ docs/
 
 ---
 
+## テスト構成
+
+### APIインテグレーションテスト（Vitest）
+
+| ファイル | 対象エンドポイント |
+|---|---|
+| `api/tests/auth.test.ts` | `/api/auth/login` ・ `/api/auth/logout` ・ `/api/auth/me` |
+| `api/tests/records.test.ts` | `/api/records`（一覧・取得・作成・更新・削除・フィルタ） |
+| `api/tests/users.test.ts` | `/api/users`（一覧・作成・ロック解除・パスワードリセット） |
+
+- テスト実行：`npm run test`
+- テスト用DB：`TEST_DATABASE_URL` 環境変数で本番DBと分離（Neon テストブランチ）
+- テスト補助：`api/tests/setup.ts`（前後処理）・`api/tests/helpers.ts`（共通関数）
+
+### CI（GitHub Actions）
+
+- 設定ファイル：`.github/workflows/test.yml`
+- トリガー：`main` ブランチへの push / pull_request
+- 実行環境：ubuntu-latest / Node.js 20
+- シークレット：`TEST_DATABASE_URL`（GitHub リポジトリ Settings > Secrets に登録）
+
+### テスト関連ファイルの変更時の注意
+
+| 変更箇所 | 注意事項 |
+|---|---|
+| `api/db/schema.ts` | テストDBにも `npm run db:push` でスキーマ適用が必要 |
+| `api/tests/*.test.ts` | `api/tests/setup.ts` の前後処理と整合性を確認 |
+| `.github/workflows/test.yml` | `TEST_DATABASE_URL` シークレットの存在を前提とする |
+
+---
+
 ## 重要な実装仕様（変更時の注意点）
 
 - **楽観的ロック**：`records.version` フィールドで管理。PUT時に `version` 不一致 → 409
@@ -156,3 +189,4 @@ docs/
 - **契約形態**：複数選択を「・」区切りで1文字列に格納
 - **セレクトボックス**：null/空文字の扱いは `:value="field ?? ''"` + `@change` パターン
 - **modal-body**：`overflow-x: hidden` 必須（CSS sticky の横固定のため）
+- **app export**：`api/server.ts` は `app` をエクスポート（テスト用）。Vercel向けHTTPハンドラと共存
