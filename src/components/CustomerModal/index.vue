@@ -71,8 +71,13 @@ const form = reactive<SalesRecord | SalesRecordInput>(
 
 onMounted(async () => {
   if (props.record) {
-    const latest = await recordsApi.get(props.record.id)
-    Object.assign(form, latest)
+    try {
+      const latest = await recordsApi.get(props.record.id)
+      Object.assign(form, latest)
+    } catch {
+      alert('最新データの取得に失敗しました。画面を再読み込みしてください。')
+      emit('close')
+    }
   }
 })
 
@@ -103,10 +108,11 @@ async function submit() {
 }
 
 async function reload() {
-  if (props.record) {
-    const latest = await recordsApi.get(props.record.id)
-    Object.assign(form, latest)
-    conflictError.value = false
-  }
+  if (!props.record) return
+  const confirmed = confirm('画面を更新すると、現在の編集内容が失われます。\n最新データで上書きしてよいですか？')
+  if (!confirmed) return
+  const latest = await recordsApi.get(props.record.id)
+  Object.assign(form, latest)
+  conflictError.value = false
 }
 </script>
