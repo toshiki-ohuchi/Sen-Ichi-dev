@@ -28,10 +28,18 @@ beforeAll(async () => {
   const adminHash = await bcrypt.hash(TEST_ADMIN.password, 10)
   const userHash = await bcrypt.hash(TEST_USER.password, 10)
 
-  await db.insert(users).values([
-    { email: TEST_ADMIN.email, passwordHash: adminHash, name: TEST_ADMIN.name, role: 'admin', isActive: true },
-    { email: TEST_USER.email, passwordHash: userHash, name: TEST_USER.name, role: 'user', isActive: true },
-  ])
+  await db.insert(users)
+    .values({ email: TEST_ADMIN.email, passwordHash: adminHash, name: TEST_ADMIN.name, role: 'admin', isActive: true })
+    .onConflictDoUpdate({
+      target: users.email,
+      set: { passwordHash: adminHash, name: TEST_ADMIN.name, role: 'admin', isActive: true, failedLoginCount: 0, lockedUntil: null },
+    })
+  await db.insert(users)
+    .values({ email: TEST_USER.email, passwordHash: userHash, name: TEST_USER.name, role: 'user', isActive: true })
+    .onConflictDoUpdate({
+      target: users.email,
+      set: { passwordHash: userHash, name: TEST_USER.name, role: 'user', isActive: true, failedLoginCount: 0, lockedUntil: null },
+    })
 })
 
 afterEach(async () => {
