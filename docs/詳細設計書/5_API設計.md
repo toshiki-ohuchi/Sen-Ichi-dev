@@ -236,6 +236,12 @@ null
 | `createdBy` | セッションのユーザーメールアドレス |
 | `updatedBy` | セッションのユーザーメールアドレス |
 
+**バリデーション**
+
+| フィールド | ルール | エラー |
+|---|---|---|
+| `customerName` | 必須・空文字不可 | `400 { "error": "customerName is required" }` |
+
 **レスポンス（201 Created）**
 
 作成されたレコード（todos・schedules除く）
