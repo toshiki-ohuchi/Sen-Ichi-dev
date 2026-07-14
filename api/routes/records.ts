@@ -75,6 +75,7 @@ recordsRouter.get('/:id', async (c) => {
 // POST /api/records
 recordsRouter.post('/', async (c) => {
   const body = await c.req.json()
+  if (!body.customerName?.trim()) return c.json({ error: 'customerName is required' }, 400)
   const userEmail = c.get('userEmail')
   const { todos: todoItems = [], schedules = [], ...recordData } = body
 
