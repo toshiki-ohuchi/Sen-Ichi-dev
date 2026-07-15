@@ -41,45 +41,53 @@ const isUsersPage = computed(() => route.path === '/users')
 async function handleImport(e: Event) {
   const file = (e.target as HTMLInputElement).files?.[0]
   if (!file) return
-  const reader = new FileReader()
-  reader.onload = async (ev) => {
-    try {
-      const wb = XLSX.read(ev.target!.result, { type: 'binary' })
-      const ws = wb.Sheets[wb.SheetNames[0]]
-      const rows = XLSX.utils.sheet_to_json<any[]>(ws, { header: 1 })
-      let imported = 0
-      for (let i = 1; i < rows.length; i++) {
-        const row = rows[i]
-        if (!row || !row[1]) continue
-        const rec = createEmptyRecord()
-        // エクスポート列順に合わせたインデックス（index 0 = No はサーバー自動採番のため読まない）
-        rec.customerName = String(row[1] || '')
-        rec.revenue = row[2];          rec.itInvestment = row[3]
-        rec.itPartnerRatio = row[4];   rec.sasRatio = row[5]
-        rec.contractRegulation = row[6]; rec.department = row[7]
-        rec.location = row[8];         rec.businessDirector = row[9]
-        rec.operationDirector = row[10]; rec.siteDirector = row[11]
-        rec.projectName = row[12];     rec.projectTotal = row[13]
-        rec.endUserOrgChart = row[14]; rec.commercialFlow = row[15]
-        rec.contractType = row[16];    rec.members = row[17]
-        rec.memberCount = row[18];     rec.avgUnitPrice = row[19]
-        rec.assignedDept = row[20];    rec.customerGrade = row[21]
-        rec.priceTableRequired = row[22]; rec.priceTableDate = row[23]
-        rec.priceTableVer = row[24];   rec.overworkRequired = row[25]
-        rec.overworkDate = row[26];    rec.overworkVer = row[27]
-        rec.salesStatus = row[28];     rec.planTarget = row[29]
-        rec.projectConcept = row[30]
+  const arrayBuffer = await file.arrayBuffer()
+  try {
+    const wb = XLSX.read(arrayBuffer, { type: 'array' })
+    const ws = wb.Sheets[wb.SheetNames[0]]
+    const rows = XLSX.utils.sheet_to_json<any[]>(ws, { header: 1 })
+    let imported = 0
+    const errors: string[] = []
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i]
+      if (!row || !row[1]) continue
+      const rec = createEmptyRecord()
+      // エクスポート列順に合わせたインデックス（index 0 = No はサーバー自動採番のため読まない）
+      rec.customerName = String(row[1] || '')
+      rec.revenue = row[2];          rec.itInvestment = row[3]
+      rec.itPartnerRatio = row[4];   rec.sasRatio = row[5]
+      rec.contractRegulation = row[6]; rec.department = row[7]
+      rec.location = row[8];         rec.businessDirector = row[9]
+      rec.operationDirector = row[10]; rec.siteDirector = row[11]
+      rec.projectName = row[12];     rec.projectTotal = row[13]
+      rec.endUserOrgChart = row[14]; rec.commercialFlow = row[15]
+      rec.contractType = row[16];    rec.members = row[17]
+      rec.memberCount = row[18];     rec.avgUnitPrice = row[19]
+      rec.assignedDept = row[20];    rec.customerGrade = row[21]
+      rec.priceTableRequired = row[22]; rec.priceTableDate = row[23]
+      rec.priceTableVer = row[24];   rec.overworkRequired = row[25]
+      rec.overworkDate = row[26];    rec.overworkVer = row[27]
+      rec.salesStatus = row[28];     rec.planTarget = row[29]
+      rec.projectConcept = row[30]
+      try {
         await recordsApi.create(rec)
         imported++
+      } catch (err: any) {
+        const msg = err?.response?.data?.error ?? err?.message ?? '不明なエラー'
+        errors.push(`行${i + 1}（${rec.customerName}）: ${msg}`)
       }
-      alert(`${imported}件をインポートしました。`)
-      await store.fetchList()
-    } catch {
-      alert('インポートに失敗しました。')
     }
-    ;(e.target as HTMLInputElement).value = ''
+    await store.fetchList()
+    if (errors.length > 0) {
+      alert(`${imported}件をインポートしました。\n\n以下の行でエラーが発生しました：\n${errors.join('\n')}`)
+    } else {
+      alert(`${imported}件をインポートしました。`)
+    }
+  } catch (err) {
+    console.error('Import error:', err)
+    alert('インポートに失敗しました。ファイル形式を確認してください。')
   }
-  reader.readAsBinaryString(file)
+  ;(e.target as HTMLInputElement).value = ''
 }
 
 function handleExport() {
