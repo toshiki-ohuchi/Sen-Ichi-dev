@@ -23,9 +23,9 @@ export async function authRequest(method: string, path: string, cookie: string, 
   })
 }
 
-/** テスト用レコードのデフォルト値 */
+/** テスト用レコードのデフォルト値（[TEST] プレフィックスで本番データと区別） */
 export const sampleRecord = {
-  customerName: 'テスト株式会社',
+  customerName: '[TEST] テスト株式会社',
   revenue: 1000,
   todos: [],
   schedules: [],

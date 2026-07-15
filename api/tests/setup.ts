@@ -1,7 +1,7 @@
 import { beforeAll, afterAll, afterEach } from 'vitest'
 import { neon } from '@neondatabase/serverless'
 import { drizzle } from 'drizzle-orm/neon-http'
-import { inArray } from 'drizzle-orm'
+import { inArray, like, or } from 'drizzle-orm'
 import * as schema from '../db/schema.js'
 import { users, sessions, records, todos, monthlySchedules } from '../db/schema.js'
 import bcrypt from 'bcryptjs'
@@ -19,17 +19,39 @@ if (!testDbUrl) {
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 【防御②】TEST_DATABASE_URL と DATABASE_URL が同一なら即座に中断
+// 【防御②】TEST_DATABASE_URL と DATABASE_URL が同じホストを指していたら中断
+//   文字列一致だけでなくホスト名レベルで比較（クエリパラメータの差異を無視）
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-if (testDbUrl === process.env.DATABASE_URL) {
+function extractHost(url: string): string {
+  try { return new URL(url).hostname } catch { return url }
+}
+const testHost = extractHost(testDbUrl)
+const prodUrl = process.env.DATABASE_URL
+if (prodUrl) {
+  const prodHost = extractHost(prodUrl)
+  if (testHost === prodHost) {
+    throw new Error(
+      '\n❌ TEST_DATABASE_URL と DATABASE_URL が同じDBホストを指しています。\n' +
+      '本番DBへの誤接続を防ぐためテストを中断しました。\n' +
+      'TEST_DATABASE_URL には必ずテスト専用ブランチの接続文字列を設定してください。'
+    )
+  }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 【防御③】CI環境では DATABASE_URL が必ず設定されていること
+//   CI（GitHub Actions）では DATABASE_URL シークレットが未設定だと防御②が機能しない
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+if (process.env.CI && !prodUrl) {
   throw new Error(
-    '\n❌ TEST_DATABASE_URL と DATABASE_URL が同じ接続文字列です。\n' +
-    '本番DBへの誤接続を防ぐためテストを中断しました。\n' +
-    'TEST_DATABASE_URL には必ずテスト専用ブランチの接続文字列を設定してください。'
+    '\n❌ CI 環境で DATABASE_URL が設定されていません。\n' +
+    'GitHub Actions の Secrets に DATABASE_URL（本番DB接続文字列）を追加し、\n' +
+    'test.yml の env セクションに DATABASE_URL: ${{ secrets.DATABASE_URL }} を追加してください。\n' +
+    'これにより TEST_DATABASE_URL と本番DBの同一性チェックが正しく機能します。'
   )
 }
 
-// 防御①②を通過した場合のみ、テスト専用DBに接続する
+// 防御を通過した場合のみ、テスト専用DBに接続する
 const sql = neon(testDbUrl)
 export const db = drizzle(sql, { schema })
 
@@ -49,14 +71,27 @@ export const TEST_USER = {
 
 const TEST_EMAILS = [TEST_ADMIN.email, TEST_USER.email]
 
+// テストレコードを識別するプレフィックス（本番データと区別するため）
+export const TEST_RECORD_PREFIX = '[TEST]'
+
 beforeAll(async () => {
-  await db.delete(monthlySchedules)
-  await db.delete(todos)
-  await db.delete(records)
-  await db.delete(sessions)
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  // 【防御③】削除はテスト用アカウントのみに限定（全件削除しない）
+  // 【防御④】テストデータのみ削除（全件削除しない）
+  //   records/todos/monthlySchedules は [TEST] プレフィックス付きのみ削除
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  const testRecords = await db
+    .select({ id: records.id })
+    .from(records)
+    .where(like(records.customerName, `${TEST_RECORD_PREFIX}%`))
+  if (testRecords.length > 0) {
+    const testRecordIds = testRecords.map(r => r.id)
+    await db.delete(monthlySchedules).where(inArray(monthlySchedules.recordId, testRecordIds))
+    await db.delete(todos).where(inArray(todos.recordId, testRecordIds))
+    await db.delete(records).where(inArray(records.id, testRecordIds))
+  }
+  await db.delete(sessions).where(inArray(sessions.userId,
+    (await db.select({ id: users.id }).from(users).where(inArray(users.email, TEST_EMAILS))).map(u => u.id)
+  ))
   await db.delete(users).where(inArray(users.email, TEST_EMAILS))
 
   const adminHash = await bcrypt.hash(TEST_ADMIN.password, 10)
@@ -77,10 +112,20 @@ beforeAll(async () => {
 })
 
 afterEach(async () => {
-  await db.delete(monthlySchedules)
-  await db.delete(todos)
-  await db.delete(records)
-  await db.delete(sessions)
+  // [TEST] プレフィックス付きレコードのみ削除
+  const testRecords = await db
+    .select({ id: records.id })
+    .from(records)
+    .where(like(records.customerName, `${TEST_RECORD_PREFIX}%`))
+  if (testRecords.length > 0) {
+    const testRecordIds = testRecords.map(r => r.id)
+    await db.delete(monthlySchedules).where(inArray(monthlySchedules.recordId, testRecordIds))
+    await db.delete(todos).where(inArray(todos.recordId, testRecordIds))
+    await db.delete(records).where(inArray(records.id, testRecordIds))
+  }
+  await db.delete(sessions).where(inArray(sessions.userId,
+    (await db.select({ id: users.id }).from(users).where(inArray(users.email, TEST_EMAILS))).map(u => u.id)
+  ))
 })
 
 afterAll(async () => {

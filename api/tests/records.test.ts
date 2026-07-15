@@ -68,12 +68,12 @@ describe('PUT /api/records/:id（楽観的ロック）', () => {
 
     const res = await authRequest('PUT', `/api/records/${created.id}`, userCookie, {
       ...sampleRecord,
-      customerName: '更新後株式会社',
+      customerName: '[TEST] 更新後株式会社',
       version: created.version,
     })
     expect(res.status).toBe(200)
     const body = await res.json()
-    expect(body.customerName).toBe('更新後株式会社')
+    expect(body.customerName).toBe('[TEST] 更新後株式会社')
     expect(body.version).toBe(created.version + 1)
   })
 
