@@ -48,21 +48,27 @@ async function handleImport(e: Event) {
       const ws = wb.Sheets[wb.SheetNames[0]]
       const rows = XLSX.utils.sheet_to_json<any[]>(ws, { header: 1 })
       let imported = 0
-      for (let i = 7; i < rows.length; i++) {
+      for (let i = 1; i < rows.length; i++) {
         const row = rows[i]
-        if (!row || !row[3]) continue
+        if (!row || !row[1]) continue
         const rec = createEmptyRecord()
-        rec.no = row[2]; rec.customerName = String(row[3] || '')
-        rec.revenue = row[4]; rec.itInvestment = row[5]
-        rec.itPartnerRatio = row[6]; rec.sasRatio = row[7]
-        rec.contractRegulation = row[8]; rec.department = row[9]
-        rec.location = row[10]; rec.businessDirector = row[11]
-        rec.operationDirector = row[12]; rec.siteDirector = row[13]
-        rec.projectName = row[14]; rec.projectTotal = row[15]
-        rec.commercialFlow = row[17]; rec.contractType = row[18]
-        rec.members = row[19]; rec.memberCount = row[20]
-        rec.avgUnitPrice = row[21]; rec.assignedDept = row[22]
-        rec.customerGrade = row[23]
+        // エクスポート列順に合わせたインデックス（index 0 = No はサーバー自動採番のため読まない）
+        rec.customerName = String(row[1] || '')
+        rec.revenue = row[2];          rec.itInvestment = row[3]
+        rec.itPartnerRatio = row[4];   rec.sasRatio = row[5]
+        rec.contractRegulation = row[6]; rec.department = row[7]
+        rec.location = row[8];         rec.businessDirector = row[9]
+        rec.operationDirector = row[10]; rec.siteDirector = row[11]
+        rec.projectName = row[12];     rec.projectTotal = row[13]
+        rec.endUserOrgChart = row[14]; rec.commercialFlow = row[15]
+        rec.contractType = row[16];    rec.members = row[17]
+        rec.memberCount = row[18];     rec.avgUnitPrice = row[19]
+        rec.assignedDept = row[20];    rec.customerGrade = row[21]
+        rec.priceTableRequired = row[22]; rec.priceTableDate = row[23]
+        rec.priceTableVer = row[24];   rec.overworkRequired = row[25]
+        rec.overworkDate = row[26];    rec.overworkVer = row[27]
+        rec.salesStatus = row[28];     rec.planTarget = row[29]
+        rec.projectConcept = row[30]
         await recordsApi.create(rec)
         imported++
       }
