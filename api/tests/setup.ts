@@ -1,17 +1,37 @@
 import { beforeAll, afterAll, afterEach } from 'vitest'
+import { neon } from '@neondatabase/serverless'
+import { drizzle } from 'drizzle-orm/neon-http'
+import { inArray } from 'drizzle-orm'
+import * as schema from '../db/schema.js'
+import { users, sessions, records, todos, monthlySchedules } from '../db/schema.js'
+import bcrypt from 'bcryptjs'
 
-// TEST_DATABASE_URL 未設定時は本番DBへの誤接続を防ぐため即座に中断する
-if (!process.env.TEST_DATABASE_URL) {
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 【防御①】TEST_DATABASE_URL 未設定なら即座に中断
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const testDbUrl = process.env.TEST_DATABASE_URL
+if (!testDbUrl) {
   throw new Error(
     '\n❌ TEST_DATABASE_URL が設定されていません。\n' +
     '本番DBへの誤接続を防ぐためテストを中断しました。\n' +
-    'ローカルでテストを実行する場合は .env.test に TEST_DATABASE_URL を設定してください。\n' +
-    '  例) TEST_DATABASE_URL=postgresql://...(Neonテストブランチの接続文字列)'
+    'ローカルで実行する場合は .env.test に TEST_DATABASE_URL を設定してください。'
   )
 }
-import { db } from '../db/index.js'
-import { users, sessions, records, todos, monthlySchedules } from '../db/schema.js'
-import bcrypt from 'bcryptjs'
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 【防御②】TEST_DATABASE_URL と DATABASE_URL が同一なら即座に中断
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+if (testDbUrl === process.env.DATABASE_URL) {
+  throw new Error(
+    '\n❌ TEST_DATABASE_URL と DATABASE_URL が同じ接続文字列です。\n' +
+    '本番DBへの誤接続を防ぐためテストを中断しました。\n' +
+    'TEST_DATABASE_URL には必ずテスト専用ブランチの接続文字列を設定してください。'
+  )
+}
+
+// 防御①②を通過した場合のみ、テスト専用DBに接続する
+const sql = neon(testDbUrl)
+export const db = drizzle(sql, { schema })
 
 export const TEST_ADMIN = {
   email: 'testadmin@sas-com.com',
@@ -27,13 +47,17 @@ export const TEST_USER = {
   role: 'user' as const,
 }
 
+const TEST_EMAILS = [TEST_ADMIN.email, TEST_USER.email]
+
 beforeAll(async () => {
-  // テスト用ユーザーを初期化
   await db.delete(monthlySchedules)
   await db.delete(todos)
   await db.delete(records)
   await db.delete(sessions)
-  await db.delete(users)
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // 【防御③】削除はテスト用アカウントのみに限定（全件削除しない）
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  await db.delete(users).where(inArray(users.email, TEST_EMAILS))
 
   const adminHash = await bcrypt.hash(TEST_ADMIN.password, 10)
   const userHash = await bcrypt.hash(TEST_USER.password, 10)
@@ -53,7 +77,6 @@ beforeAll(async () => {
 })
 
 afterEach(async () => {
-  // 各テスト後にレコード・セッションをクリア（ユーザーは保持）
   await db.delete(monthlySchedules)
   await db.delete(todos)
   await db.delete(records)
@@ -61,5 +84,6 @@ afterEach(async () => {
 })
 
 afterAll(async () => {
-  await db.delete(users)
+  // テスト用アカウントのみ削除（全件削除しない）
+  await db.delete(users).where(inArray(users.email, TEST_EMAILS))
 })
