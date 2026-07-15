@@ -1,4 +1,14 @@
 import { beforeAll, afterAll, afterEach } from 'vitest'
+
+// TEST_DATABASE_URL 未設定時は本番DBへの誤接続を防ぐため即座に中断する
+if (!process.env.TEST_DATABASE_URL) {
+  throw new Error(
+    '\n❌ TEST_DATABASE_URL が設定されていません。\n' +
+    '本番DBへの誤接続を防ぐためテストを中断しました。\n' +
+    'ローカルでテストを実行する場合は .env.test に TEST_DATABASE_URL を設定してください。\n' +
+    '  例) TEST_DATABASE_URL=postgresql://...(Neonテストブランチの接続文字列)'
+  )
+}
 import { db } from '../db/index.js'
 import { users, sessions, records, todos, monthlySchedules } from '../db/schema.js'
 import bcrypt from 'bcryptjs'
