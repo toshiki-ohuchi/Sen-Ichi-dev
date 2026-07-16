@@ -1,7 +1,7 @@
 import { beforeAll, afterAll, afterEach } from 'vitest'
 import { neon } from '@neondatabase/serverless'
 import { drizzle } from 'drizzle-orm/neon-http'
-import { inArray, like, or } from 'drizzle-orm'
+import { inArray, like } from 'drizzle-orm'
 import * as schema from '../db/schema.js'
 import { users, sessions, records, todos, monthlySchedules } from '../db/schema.js'
 import bcrypt from 'bcryptjs'
@@ -89,9 +89,7 @@ beforeAll(async () => {
     await db.delete(todos).where(inArray(todos.recordId, testRecordIds))
     await db.delete(records).where(inArray(records.id, testRecordIds))
   }
-  await db.delete(sessions).where(inArray(sessions.userId,
-    (await db.select({ id: users.id }).from(users).where(inArray(users.email, TEST_EMAILS))).map(u => u.id)
-  ))
+  await db.delete(sessions).where(inArray(sessions.userEmail, TEST_EMAILS))
   await db.delete(users).where(inArray(users.email, TEST_EMAILS))
 
   const adminHash = await bcrypt.hash(TEST_ADMIN.password, 10)
@@ -123,9 +121,7 @@ afterEach(async () => {
     await db.delete(todos).where(inArray(todos.recordId, testRecordIds))
     await db.delete(records).where(inArray(records.id, testRecordIds))
   }
-  await db.delete(sessions).where(inArray(sessions.userId,
-    (await db.select({ id: users.id }).from(users).where(inArray(users.email, TEST_EMAILS))).map(u => u.id)
-  ))
+  await db.delete(sessions).where(inArray(sessions.userEmail, TEST_EMAILS))
 })
 
 afterAll(async () => {
