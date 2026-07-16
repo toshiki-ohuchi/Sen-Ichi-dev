@@ -9,7 +9,7 @@
       <template v-if="!isUsersPage">
         <label class="btn btn-secondary btn-sm">
           <input type="file" accept=".xlsx,.xls" style="display:none" @change="handleImport" />
-          Excelインポート★
+          Excelインポート
         </label>
         <button class="btn btn-secondary btn-sm" @click="handleExport">Excelエクスポート</button>
       </template>
@@ -44,14 +44,8 @@ async function handleImport(e: Event) {
   const arrayBuffer = await file.arrayBuffer()
   try {
     const wb = XLSX.read(arrayBuffer, { type: 'array' })
-    const sheetName = wb.SheetNames[0]
-    const ws = wb.Sheets[sheetName]
+    const ws = wb.Sheets[wb.SheetNames[0]]
     const rows = XLSX.utils.sheet_to_json<any[]>(ws, { header: 1 })
-    // デバッグ: ファイル内容確認
-    const debugInfo = `シート: ${sheetName}\n全行数: ${rows.length}\n` +
-      rows.slice(0, 5).map((r, i) => `行${i}: [${String(r).slice(0, 80)}]`).join('\n')
-    console.log('[Import Debug]', debugInfo)
-    if (!confirm(`ファイル読み込み確認:\n${debugInfo}\n\nインポートを続行しますか？`)) return
     let imported = 0
     const errors: string[] = []
     for (let i = 1; i < rows.length; i++) {
