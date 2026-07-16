@@ -9,7 +9,7 @@
       <template v-if="!isUsersPage">
         <label class="btn btn-secondary btn-sm">
           <input type="file" accept=".xlsx,.xls" style="display:none" @change="handleImport" />
-          Excelインポート
+          Excelインポート★
         </label>
         <button class="btn btn-secondary btn-sm" @click="handleExport">Excelエクスポート</button>
       </template>
